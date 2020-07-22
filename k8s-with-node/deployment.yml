@@ -1,0 +1,36 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: exampleservice
+spec:
+  selector:
+    app: myapp
+  ports:
+    - protocol: "TCP"
+      # port accesible inside cluster
+      port: 8081
+      # port to forward to inside the prod
+      targetPort: 8080
+      # Port accesible outside cluster
+      nodePort: 30002
+  type: LoadBalancer
+
+
+---
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: myappdeployment
+spec:
+  replicas: 5
+  tempalte:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp
+          image: vkiril/kubernetes
+          ports:
+            - containerPort: 8080
